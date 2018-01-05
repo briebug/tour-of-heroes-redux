@@ -1,0 +1,33 @@
+<mat-card *ngIf="hero">
+  <mat-card-header>
+    <mat-card-title><h2>{{ hero.character.name }}</h2></mat-card-title>
+  </mat-card-header>
+  <div [ngStyle]="{ 'background-image': 'url(' + getHeroImage() + ')' }" mat-card-image></div>
+  <mat-card-content>
+
+    <h4>Description</h4>
+    <div *ngIf="hero.character.description; else noDescription">
+      <p>{{ hero.character.description }}</p>
+    </div>
+    <ng-template #noDescription>
+      <em>It's a secret, shhhh.</em>
+    </ng-template>
+
+    <h4>Super Powers</h4>
+    <ul *ngIf="powers; else noPowers">
+      <li *ngFor="let power of powers">
+        {{ power.name }}
+      </li>
+    </ul>
+    <ng-template #noPowers>
+      <em>This super hero has no super powers, whhhhatt?</em>
+    </ng-template>
+
+    <h4>Learn More</h4>
+    <ul>
+      <li *ngIf="hasCharacterUrlByType('detail')"><a [href]="getCharacterUrlByType('detail').url" target="_blank">Detail</a></li>
+      <li *ngIf="hasCharacterUrlByType('wiki')"><a [href]="getCharacterUrlByType('wiki').url" target="_blank">Wiki</a></li>
+      <li *ngIf="hasCharacterUrlByType('comiclink')"><a [href]="getCharacterUrlByType('comiclink').url" target="_blank">Comics</a></li>
+    </ul>
+  </mat-card-content>
+</mat-card>
