@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
 import { MatSnackBar } from "@angular/material";
+import { ActivatedRoute } from "@angular/router";
 
 import { Observable } from "rxjs/Observable";
 import { switchMap } from "rxjs/operators";
 
-import { HeroesService } from "../../../core/services/heroes.service";
-import { PowersService } from "../../../core/services/powers.service";
 import { Hero } from "../../../core/models/hero.model";
 import { Power } from "../../../core/models/power.model";
+import { HeroesService } from "../../../core/services/heroes.service";
+import { PowersService } from "../../../core/services/powers.service";
 
 @Component({
   templateUrl: './edit.component.html',

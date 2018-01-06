@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 
 import { Power } from "../../../core/models/power.model";
 
@@ -7,7 +7,7 @@ import { Power } from "../../../core/models/power.model";
   templateUrl: './powers.component.html',
   styleUrls: ['./powers.component.scss']
 })
-export class PowersComponent {
+export class PowersComponent implements OnChanges {
 
   @Input() powers: Power[];
 
@@ -16,5 +16,20 @@ export class PowersComponent {
   @Output() editChange = new EventEmitter<Power>();
 
   constructor() { }
+
+  ngOnChanges() {
+    if (this.powers) {
+      this.powers = this.powers.sort((a, b) => {
+        const aName = a.name.toUpperCase();
+        const bName = b.name.toUpperCase();
+        if (aName < bName) {
+          return -1;
+        } else if (aName > bName) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+  }
 
 }

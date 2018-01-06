@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
 import { MatSnackBar } from "@angular/material";
+import { ActivatedRoute } from "@angular/router";
+import { Store } from "@ngrx/store";
 
 import { Observable } from "rxjs/Observable";
-import { switchMap } from "rxjs/operators";
+import { first, map, switchMap, tap } from "rxjs/operators";
 
 import { Power } from "../../../core/models/power.model";
-import { PowersService } from "../../../core/services/powers.service";
+import { LoadPower, SelectPower, UpdatePower } from "../../../state/powers/actions/powers";
+import { getSelectedPower, getPowersTotal, PowersState } from "../../../state/powers/reducers";
 
 @Component({
   selector: 'app-edit',
@@ -19,21 +21,38 @@ export class EditComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute,
               private matSnackBar: MatSnackBar,
-              private powersService: PowersService) {
+              private store: Store<PowersState>) {
   }
 
   ngOnInit() {
     this.power = this.activatedRoute.paramMap
       .pipe(
-        switchMap(paramMap => this.powersService.getPower(paramMap.get('id')))
+        tap(paramMap => this.store.dispatch(new SelectPower({ id: Number(paramMap.get('id')) }))),
+        tap(paramMap => {
+          this.hasPowersInStore()
+            .subscribe(exists => {
+              if (!exists) {
+                this.store.dispatch(new LoadPower({ id: Number(paramMap.get('id')) }));
+              }
+            });
+        }),
+        switchMap(() => this.store.select(getSelectedPower))
       );
   }
 
+  hasPowersInStore(): Observable<boolean> {
+    return this.store.select(getPowersTotal)
+      .pipe(
+        first(),
+        map(total => total > 0)
+      )
+  }
+
   onPowerChange(power: Power) {
-    this.powersService.updatePower(power)
-      .subscribe(() => this.matSnackBar.open('Power Saved', 'Success', {
-        duration: 2000
-      }));
+    this.store.dispatch(new UpdatePower(power));
+    // .subscribe(() => this.matSnackBar.open('Power Saved', 'Success', {
+    //   duration: 2000
+    // }));
   }
 
 }
